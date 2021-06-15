@@ -9,7 +9,7 @@ module.exports = {
   mode,
   devtool: sourceMap,
   resolve: {
-    // modules: ['node_modules', 'src'],
+    modules: ['node_modules', 'src'],
     extensions: ['.tsx', '.js'],
   },
   devServer: { historyApiFallback: true, port: process.env.PORT || '8080' },
