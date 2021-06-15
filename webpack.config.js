@@ -1,6 +1,6 @@
 const HTMLWebpackPlugin = require('html-webpack-plugin')
 
-const mode = process.env.mode || 'development'
+const mode = process.env.MODE || 'development'
 const filename = mode === 'development' ? '[name].js' : '[name].[contenthash:7].js'
 const sourceMap =
   mode === 'development' ? 'eval-source-map' : 'nosources-source-map'

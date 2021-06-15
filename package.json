@@ -5,8 +5,8 @@
   "main": "index.js",
   "scripts": {
     "start": "npm run dev",
-    "dev": "cross-env ENV_BUILD_MODE='development' PORT=3000 webpack serve --progress",
-    "build": "webpack --progress --stats-error-details",
+    "dev": "cross-env MODE='development' PORT=3000 webpack serve --progress",
+    "build": "cross-env MODE='production' webpack --progress",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
