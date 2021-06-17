@@ -1,0 +1,9 @@
+@import "styles/vars.scss";
+
+.title {
+  margin: 3rem 0 1rem;
+  font-size: 2rem;
+  color: $color-font-title;
+  font-weight: 900;
+  text-shadow: 2px 2px 2px $color-font-reverse;
+}

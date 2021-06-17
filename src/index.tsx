@@ -1,6 +1,5 @@
 import ReactDOM from 'react-dom'
-import "./base.scss"
+import "styles/base.scss"
+import ViewTodo from 'views/todo'
 
-const App = () => <div>app</div>
-
-ReactDOM.render(<App />, document.querySelector('#root'))
+ReactDOM.render(<ViewTodo />, document.querySelector('#root'))
