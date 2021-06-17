@@ -1,0 +1,47 @@
+@startuml webpack
+
+start
+:entry;
+:resolve;
+note
+  path: modules / relative path
+  file: name / extensions
+end note
+:filter by extensions;
+fork
+:<font color=blue>typescript</font>;
+:swc-loader;
+fork again
+:<font color=blue>css / scss</font>;
+:css-loader;
+:style-loader;
+fork again
+:<font color=blue>img / font</font>;
+:asset/resource;
+end fork
+note
+css can also be exported
+to a single file.
+end note
+:plugins;
+note
+  inject assets into html
+end note
+:optimization;
+note
+when mode is production,
+compress JavaScript,
+and CSS too.
+end note
+:output;
+fork
+:bundle;
+fork again
+:source map;
+fork again
+:LICENSE;
+end fork
+
+end
+
+@enduml
