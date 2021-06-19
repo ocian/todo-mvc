@@ -3,6 +3,8 @@
 pnpm build
 cd dist
 git init .
+git branch main
+git checkout main
 git add .
 git commit -m "update: gh-pages content"
 git remote add origin https://github.com/ocian/todo-mvc.git
