@@ -1,26 +1,36 @@
 const HTMLWebpackPlugin = require('html-webpack-plugin')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const CssMinimizerPlugin = require('css-minimizer-webpack-plugin')
+const path = require('path')
 
 const mode = process.env.MODE || 'development'
-const filename = mode === 'development' ? '[name].js' : '[name].[contenthash:7].js'
-const filenameAssets = mode === 'development' ? '[name].[ext][query]' : '[name].[contenthash:7][ext][query]'
+const filename =
+  mode === 'development' ? '[name].js' : '[name].[contenthash:7].js'
+const filenameAssets =
+  mode === 'development'
+    ? '[name].[ext][query]'
+    : '[name].[contenthash:7][ext][query]'
 const sourceMap =
   mode === 'development' ? 'eval-source-map' : 'nosources-source-map'
 const cssExportLoader =
   mode === 'production' ? MiniCssExtractPlugin.loader : 'style-loader'
-const pluginsProduction = mode === 'production' ? [new MiniCssExtractPlugin()] : []
-const optimization = mode === 'production'
-  ? { minimizer: ['...', new CssMinimizerPlugin()], }
-  : undefined
+const pluginsProduction =
+  mode === 'production' ? [new MiniCssExtractPlugin()] : []
+const optimization =
+  mode === 'production'
+    ? { minimizer: ['...', new CssMinimizerPlugin()] }
+    : undefined
 
 module.exports = {
   mode,
   devtool: sourceMap,
   optimization,
   resolve: {
-    modules: ['node_modules', 'src'],
-    extensions: ['.tsx', '.js'],
+    modules: ['node_modules'],
+    extensions: ['.tsx', '.ts', '.js', '.jsx'],
+    alias: {
+      Src: path.resolve(__dirname, 'src'),
+    },
   },
   devServer: { historyApiFallback: true, port: process.env.PORT || '8080' },
   entry: './src/index.tsx',
@@ -67,7 +77,7 @@ module.exports = {
         generator: {
           filename: 'images/' + filenameAssets,
         },
-      }
-    ]
-  }
+      },
+    ],
+  },
 }

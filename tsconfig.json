@@ -1,6 +1,9 @@
 {
   "compilerOptions": {
-    "baseUrl": "src",
+    "baseUrl": ".",
+    "paths": {
+      "Src/*": ["./src/*"]
+    },
     "jsx": "react-jsx",
     "esModuleInterop": true
   }
