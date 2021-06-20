@@ -1,8 +1,10 @@
 import { PropsWithChildren } from 'react'
 import styles from './index.module.scss'
 
-interface TodoGroupProps {}
+interface CheckboxGroupProps {}
 
-export default function TodoGroup(props: PropsWithChildren<TodoGroupProps>) {
+export default function CheckboxGroup(
+  props: PropsWithChildren<CheckboxGroupProps>
+) {
   return <div className={styles.todo_group}>{props.children}</div>
 }

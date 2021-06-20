@@ -1,9 +1,10 @@
 import Title from 'Src/components/title'
-import Todo from 'Src/components/todo'
-import TodoGroup from 'Src/components/todo_group'
+import CheckboxGroup from 'Src/components/checkbox_group'
 import { useEffect, useState } from 'react'
 import styles from './todo.module.scss'
 import { getList } from 'Src/mocks/todos'
+import Checkbox from 'Src/components/checkbox'
+import Content from 'Src/components/content'
 
 interface ListItem {
   [key: string]: { id: number; checked: boolean; content: string }
@@ -47,20 +48,26 @@ export default function ViewTodo() {
         {!Object.entries(list).length && (
           <div className={styles.no_data}>no data</div>
         )}
-        <TodoGroup>
+        <CheckboxGroup>
           {Object.entries(list).map(([id, item]) => (
-            <Todo
+            <Checkbox
               key={id}
-              content={item.content}
+              id={id}
               checked={item.checked}
-              onChangeChecked={() => changeChecked(id)}
-              onChangeContent={(newContent: string) =>
-                changeContent(id, newContent)
+              label={
+                <Content
+                  text={item.content}
+                  onChange={(newContent: string) =>
+                    changeContent(id, newContent)
+                  }
+                  disabled={item.checked}
+                />
               }
-              onDelete={() => delTodo(id)}
+              onChange={() => changeChecked(id)}
+              onRemove={() => delTodo(id)}
             />
           ))}
-        </TodoGroup>
+        </CheckboxGroup>
       </div>
     </div>
   )

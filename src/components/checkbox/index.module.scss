@@ -3,11 +3,7 @@
 @import 'Src/styles/vars.scss';
 @import 'Src/styles/mixins.scss';
 
-$width-icon: 30px;
-$width-icon-border: 1px;
-$line-height: $width-icon + $width-icon-border * 2;
-
-$icon-translate: math.div($width-icon, 5);
+$icon-translate: math.div($width-select-icon, 5);
 
 .todo {
   display: flex;
@@ -22,10 +18,10 @@ $icon-translate: math.div($width-icon, 5);
   flex: none;
   top: 0;
   left: 0;
-  width: $width-icon;
-  height: $width-icon;
+  width: $width-select-icon;
+  height: $width-select-icon;
   margin-right: 10px;
-  border: $width-icon-border solid;
+  border: $width-select-icon-border solid;
   border-radius: 100%;
   cursor: pointer;
   @include flex-center();
@@ -33,8 +29,8 @@ $icon-translate: math.div($width-icon, 5);
   &:before {
     transition: opacity 0.3s ease-in;
     content: '';
-    width: $width-icon * 0.6;
-    height: $width-icon * 0.3;
+    width: $width-select-icon * 0.6;
+    height: $width-select-icon * 0.3;
     border-left: 1px solid $color-checked;
     border-bottom: 1px solid $color-checked;
     transform: rotate(-45deg) translateX($icon-translate);
@@ -59,45 +55,11 @@ $icon-translate: math.div($width-icon, 5);
   border-bottom: 1px solid #eee;
 }
 
-.content {
-  transition: all 0.3s ease-in;
-  flex: auto;
-  padding: 0 2px;
-  word-break: break-all;
-  line-height: $line-height;
-  max-height: $line-height * 3;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
-  text-decoration: line-through;
-
-  &.uncheck {
-    color: $color-font;
-    text-decoration-color: transparent;
-  }
-  &.checked {
-    color: $color-font-label;
-    text-decoration-color: $color-font-label;
-  }
-}
-
-.input_area {
-  display: inline-block;
-  border: 0;
-  outline: none;
-  width: calc(96% - 4px);
-  height: calc(100% - 4px);
-  padding: 2px 2px;
-  box-shadow: inset 0 0 2px #000;
-}
-
 .icon_delete {
   flex: none;
   margin-left: 10px;
-  width: $width-icon;
-  height: $width-icon;
+  width: $width-select-icon;
+  height: $width-select-icon;
   visibility: hidden;
   position: relative;
   cursor: pointer;
