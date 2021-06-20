@@ -28,12 +28,15 @@ $line-height: $width-checkbox-icon + $width-checkbox-icon-border * 2;
   }
 }
 
+.text {
+  padding: 0 2px;
+}
 .input_area {
   display: inline-block;
   border: 0;
   outline: none;
   width: calc(96% - 4px);
   height: calc(100% - 4px);
-  padding: 2px 2px;
+  padding: 0 2px;
   box-shadow: inset 0 0 2px #000;
 }

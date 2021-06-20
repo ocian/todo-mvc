@@ -14,8 +14,7 @@ export default function Content(props: ContentProps) {
   const refInput = useRef<HTMLInputElement>()
 
   function clickDouble() {
-    if (props.disabled || typeof props.onChange !== 'function')
-      return
+    if (props.disabled || typeof props.onChange !== 'function') return
     setInput(props.text)
     setEditing(true)
   }
@@ -43,7 +42,11 @@ export default function Content(props: ContentProps) {
         [styles.enabled]: !props.disabled,
       })}
     >
-      {!editing && <span onDoubleClick={clickDouble}>{props.text}</span>}
+      {!editing && (
+        <span onDoubleClick={clickDouble} className={styles.text}>
+          {props.text}
+        </span>
+      )}
       {editing && (
         <input
           className={styles.input_area}
