@@ -21,6 +21,15 @@ const optimization =
     ? { minimizer: ['...', new CssMinimizerPlugin()] }
     : undefined
 
+const CSSLoader = {
+  loader: 'css-loader',
+  options: {
+    modules: {
+      localIdentName: '[local]--[hash:base64:5]',
+    },
+  },
+}
+
 module.exports = {
   mode,
   devtool: sourceMap,
@@ -58,11 +67,11 @@ module.exports = {
       },
       {
         test: /\.s(c|a)ss$/,
-        use: [cssExportLoader, 'css-loader', 'sass-loader'],
+        use: [cssExportLoader, CSSLoader, 'sass-loader'],
       },
       {
         test: /\.css$/,
-        use: [cssExportLoader, 'css-loader'],
+        use: [cssExportLoader, CSSLoader],
       },
       {
         test: /\.(woff|woff2|eot|ttf|otf)$/i,
