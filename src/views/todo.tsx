@@ -13,6 +13,7 @@ interface ListItem {
 export default function ViewTodo() {
   const [list, setList] = useState<ListItem>(() => ({}))
   // const [initing, setIniting] = useState<boolean>(() => true)
+  const [selections, setSelections] = useState<number[]>(() => [])
 
   function changeChecked(id: string) {
     const current = list[id]
@@ -48,7 +49,7 @@ export default function ViewTodo() {
         {!Object.entries(list).length && (
           <div className={styles.no_data}>no data</div>
         )}
-        <CheckboxGroup>
+        <CheckboxGroup selections={selections} onChange={setSelections}>
           {Object.entries(list).map(([id, item]) => (
             <Checkbox
               key={id}
@@ -60,7 +61,7 @@ export default function ViewTodo() {
                   onChange={(newContent: string) =>
                     changeContent(id, newContent)
                   }
-                  disabled={item.checked}
+                  disabled={selections.includes(+id)}
                 />
               }
               onChange={() => changeChecked(id)}
