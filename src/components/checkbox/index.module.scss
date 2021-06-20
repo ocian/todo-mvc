@@ -3,7 +3,7 @@
 @import 'Src/styles/vars.scss';
 @import 'Src/styles/mixins.scss';
 
-$icon-translate: math.div($width-select-icon, 5);
+$icon-translate: math.div($width-checkbox-icon, 5);
 
 .todo {
   display: flex;
@@ -18,10 +18,10 @@ $icon-translate: math.div($width-select-icon, 5);
   flex: none;
   top: 0;
   left: 0;
-  width: $width-select-icon;
-  height: $width-select-icon;
+  width: $width-checkbox-icon;
+  height: $width-checkbox-icon;
   margin-right: 10px;
-  border: $width-select-icon-border solid;
+  border: $width-checkbox-icon-border solid;
   border-radius: 100%;
   cursor: pointer;
   @include flex-center();
@@ -29,8 +29,8 @@ $icon-translate: math.div($width-select-icon, 5);
   &:before {
     transition: opacity 0.3s ease-in;
     content: '';
-    width: $width-select-icon * 0.6;
-    height: $width-select-icon * 0.3;
+    width: $width-checkbox-icon * 0.6;
+    height: $width-checkbox-icon * 0.3;
     border-left: 1px solid $color-checked;
     border-bottom: 1px solid $color-checked;
     transform: rotate(-45deg) translateX($icon-translate);
@@ -58,8 +58,8 @@ $icon-translate: math.div($width-select-icon, 5);
 .icon_delete {
   flex: none;
   margin-left: 10px;
-  width: $width-select-icon;
-  height: $width-select-icon;
+  width: $width-checkbox-icon;
+  height: $width-checkbox-icon;
   visibility: hidden;
   position: relative;
   cursor: pointer;
