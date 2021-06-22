@@ -2,7 +2,7 @@ import Title from 'Src/components/title'
 import CheckboxGroup from 'Src/components/checkbox_group'
 import { useEffect, useState } from 'react'
 import styles from './todo.module.scss'
-import { getList } from 'Src/mocks/todos'
+import { getListTodo } from 'Src/mocks/todos'
 import Checkbox from 'Src/components/checkbox'
 import Content from 'Src/components/content'
 
@@ -34,7 +34,7 @@ export default function ViewTodo() {
   }
 
   async function fetchList() {
-    const list = await getList()
+    const list = await getListTodo()
     setList(list)
   }
 

@@ -1,15 +1,66 @@
-const lists = Array.from({ length: 12 }).map((_: undefined, index: number) => ({
+const list = Array.from({ length: 12 }).map((_: undefined, index: number) => ({
   id: index + 1,
   checked: getChecked(),
   content: getContent(),
+  deleteAt: null,
 }))
 
-export const getList = () =>
-  Promise.resolve(
-    lists
-      .map((item) => ({ [item.id]: item }))
-      .reduce((l, r) => ({ ...l, ...r }), {})
-  )
+const getTodo = (params: { id: number }) => {
+  const todo = list.filter(
+    (item) => item.id === params.id && item.deleteAt !== null
+  )[0]
+  if (!todo) return false
+  return todo
+}
+
+export const getListTodo = () => {
+  const _list = list
+    .filter(({ deleteAt }) => !deleteAt)
+    .map(({ id, checked, content }) => ({
+      [id]: { id, checked, content },
+    }))
+    .reduce((l, r) => ({ ...l, ...r }), {})
+  return {
+    code: 1,
+    result: _list,
+  }
+}
+
+export const addTodo = (params: { content: string }) => {
+  const todo = {
+    checked: false,
+    content: params.content,
+    id: list.length,
+    deleteAt: null,
+  }
+  list.push(todo)
+  return Promise.resolve({
+    code: 1,
+    result: true,
+  })
+}
+
+export const updateTodo = (params: {
+  id: number
+  checked?: boolean
+  content?: string
+}) => {
+  const todo = getTodo({ id: params.id })
+  if (!todo) return Promise.resolve({ code: -1, msg: 'Id matchs no data!' })
+
+  if (params.checked) todo.checked = params.checked
+  if (params.content) todo.content = params.content
+  list[params.id] = todo
+  return Promise.resolve({ code: 1, result: true })
+}
+
+export const deleteTodo = (params: { id: number }) => {
+  const todo = getTodo({ id: params.id })
+  if (!todo) return Promise.resolve({ code: -1, msg: 'Id matchs no data!' })
+  todo.deleteAt = Date.now()
+  list[params.id] = todo
+  return Promise.resolve({ code: 1, result: true })
+}
 
 function getChecked() {
   return Math.random() > 0.5 ? true : false
