@@ -83,6 +83,14 @@ export default function ViewTodo() {
     createTodo({ content: _input })
   }
 
+  function toggleSelectAll() {
+    if (selections.length < Object.keys(list).length) {
+      setSelections(Object.keys(list).map((id) => +id))
+    } else {
+      setSelections([])
+    }
+  }
+
   async function fetchList() {
     const { code, result } = await getListTodo()
     if (code === 1) {
@@ -116,9 +124,10 @@ export default function ViewTodo() {
       <div className={styles.line_input}>
         <div
           className={clsx('icon-check', {
-            checked: checkedAll,
-            uncheck: !checkedAll,
+            checked: Object.keys(list).length > 0 && selections.length === Object.keys(list).length,
+            uncheck: Object.keys(list).length === 0 || selections.length < Object.keys(list).length,
           })}
+          onClick={toggleSelectAll}
         ></div>
         <input
           type="text"
