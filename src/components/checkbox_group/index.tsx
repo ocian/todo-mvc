@@ -16,9 +16,7 @@ interface CheckboxGroupProps {
 export default function CheckboxGroup(
   props: PropsWithChildren<CheckboxGroupProps>
 ) {
-  const [status, setStatus] = useState<'all' | 'checked' | 'uncheck'>(
-    () => 'all'
-  )
+  const [status, setStatus] = useState<'all' | 'checked' | 'uncheck'>('all')
 
   const wrappedChildren = Children.map(props.children, (child) => {
     if (!isValidElement(child)) return null
@@ -41,8 +39,8 @@ export default function CheckboxGroup(
     return cloneElement(child, { checked, onChange })
   })
 
-  function clearDone () {
-    if (typeof props.clearChecked !== 'function') return 
+  function clearDone() {
+    if (typeof props.clearChecked !== 'function') return
     props.clearChecked()
     setStatus('all')
   }

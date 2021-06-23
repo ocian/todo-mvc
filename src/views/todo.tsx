@@ -12,10 +12,10 @@ interface ListItem {
 }
 
 export default function ViewTodo() {
-  const [list, setList] = useState<ListItem>(() => ({}))
-  const [selections, setSelections] = useState<number[]>(() => [])
-  const [checkedAll, setCheckedAll] = useState<boolean>(() => false)
-  const [input, setInput] = useState<string>(() => '')
+  const [list, setList] = useState<ListItem>({})
+  const [selections, setSelections] = useState<number[]>([])
+  const [checkedAll, setCheckedAll] = useState<boolean>(false)
+  const [input, setInput] = useState<string>('')
 
   // get data from apis, and use it into state
   function setData(todoList: ListItem) {

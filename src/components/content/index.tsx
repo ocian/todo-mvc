@@ -9,8 +9,8 @@ interface ContentProps {
 }
 
 export default function Content(props: ContentProps) {
-  const [input, setInput] = useState<string>(() => '')
-  const [editing, setEditing] = useState<boolean>(() => false)
+  const [input, setInput] = useState<string>('')
+  const [editing, setEditing] = useState<boolean>(false)
   const refInput = useRef<HTMLInputElement>()
 
   function clickDouble() {
