@@ -1,7 +1,7 @@
 @use "sass:math";
 
-@import 'Src/styles/vars.scss';
-@import 'Src/styles/mixins.scss';
+@import '../../styles/vars.scss';
+@import '../../styles/mixins.scss';
 
 .todo {
   display: flex;

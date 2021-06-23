@@ -1,5 +1,5 @@
-import Title from 'Src/components/title'
-import CheckboxGroup from 'Src/components/checkbox_group'
+import Title from '../components/title'
+import CheckboxGroup from '../components/checkbox_group'
 import React, { useEffect, useState } from 'react'
 import styles from './todo.module.scss'
 import {
@@ -8,9 +8,9 @@ import {
   updateTodo,
   addTodo,
   updateTodos,
-} from 'Src/mocks/todos'
-import Checkbox from 'Src/components/checkbox'
-import Content from 'Src/components/content'
+} from '../mocks/todos'
+import Checkbox from '../components/checkbox'
+import Content from '../components/content'
 import clsx from 'clsx'
 
 interface ListItem {

@@ -36,11 +36,7 @@ module.exports = {
   devtool: sourceMap,
   optimization,
   resolve: {
-    modules: ['node_modules'],
     extensions: ['.tsx', '.ts', '.js', '.jsx'],
-    alias: {
-      Src: path.resolve(__dirname, 'src'),
-    },
   },
   devServer: { historyApiFallback: true, port: process.env.PORT || '8080' },
   entry: './src/index.tsx',
