@@ -1,12 +1,25 @@
-const list = Array.from({ length: 12 }).map((_: undefined, index: number) => ({
-  id: index + 1,
-  checked: getChecked(),
-  content: getContent(),
-  deleteAt: null,
-}))
+// const list = Array.from({ length: 12 }).map((_: undefined, index: number) => ({
+//   id: index + 1,
+//   checked: getChecked(),
+//   content: getContent(),
+//   deleteAt: null,
+// }))
+
+function getList() {
+  const list = localStorage.getItem('todos')
+  try {
+    if (list) return JSON.parse(list)
+    else return []
+  } catch (e) {
+    return []
+  }
+}
+function setList(list) {
+  localStorage.setItem('todos', JSON.stringify(list))
+}
 
 const getTodo = (params: { id: number }) => {
-  const todo = list.filter(
+  const todo = getList().filter(
     (item) => item.id === params.id && item.deleteAt === null
   )[0]
   if (!todo) return false
@@ -14,7 +27,7 @@ const getTodo = (params: { id: number }) => {
 }
 
 export const getListTodo = () => {
-  const _list = list
+  const _list = getList()
     .filter(({ deleteAt }) => !deleteAt)
     .map(({ id, checked, content }) => ({
       [id]: { id, checked, content },
@@ -29,6 +42,7 @@ export const getListTodo = () => {
 export const addTodo: (params: {
   content: string
 }) => Promise<{ code: number; result: { id: number } }> = (params) => {
+  const list = getList()
   const id = list.length
   const todo = {
     checked: false,
@@ -37,6 +51,7 @@ export const addTodo: (params: {
     deleteAt: null,
   }
   list.push(todo)
+  setList(list)
   return Promise.resolve({
     code: 1,
     result: { id },
@@ -48,6 +63,7 @@ export const updateTodo = (params: {
   checked?: boolean
   content?: string
 }) => {
+  const list = getList()
   const todo = getTodo({ id: params.id })
   if (!todo) return Promise.resolve({ code: -1, msg: 'Id matchs no data!' })
 
@@ -55,17 +71,20 @@ export const updateTodo = (params: {
   if (params.content) todo.content = params.content
   const index = getIndex(params.id)
   list[index] = todo
+  setList(list)
   return Promise.resolve({ code: 1, result: true })
 }
 
 export const deleteTodo: (params: {
   id: number
 }) => Promise<{ code: number; result?: true; msg?: string }> = (params) => {
+  const list = getList()
   const todo = getTodo({ id: params.id })
   if (!todo) return Promise.resolve({ code: -1, msg: 'Id matchs no data!' })
   todo.deleteAt = Date.now()
   const index = getIndex(params.id)
   list[index] = todo
+  setList(list)
   return Promise.resolve({ code: 1, result: true })
 }
 
@@ -76,6 +95,7 @@ function getContent() {
   return Math.floor(Math.random() * 1e16) + ''
 }
 function getIndex(id: number) {
+  const list = getList()
   let index = 0
   for (let i = 0; i < list.length; i += 1) {
     if (list[i].id === id) {
