@@ -2,40 +2,95 @@ import Title from 'Src/components/title'
 import CheckboxGroup from 'Src/components/checkbox_group'
 import { useEffect, useState } from 'react'
 import styles from './todo.module.scss'
-import { getListTodo } from 'Src/mocks/todos'
+import { deleteTodo, getListTodo, updateTodo, addTodo } from 'Src/mocks/todos'
 import Checkbox from 'Src/components/checkbox'
 import Content from 'Src/components/content'
 
 interface ListItem {
-  [key: string]: { id: number; checked: boolean; content: string }
+  [key: string]: { id?: number; checked?: boolean; content: string }
 }
 
 export default function ViewTodo() {
   const [list, setList] = useState<ListItem>(() => ({}))
-  // const [initing, setIniting] = useState<boolean>(() => true)
   const [selections, setSelections] = useState<number[]>(() => [])
 
-  function changeChecked(id: string) {
-    const current = list[id]
-    setList({ ...list, [id]: { ...current, checked: !current.checked } })
-  }
-  function changeContent(id, newContent: string) {
-    const current = list[id]
-    setList({ ...list, [id]: { ...current, content: newContent } })
-  }
-  function delTodo(id) {
+  // get data from apis, and use it into state
+  function setData(todoList: ListItem) {
     const _list = {}
-    for (let key in list) {
-      if ({}.hasOwnProperty.call(list, key)) {
-        if (id !== key) _list[key] = { ...list[key] }
+    for (let id in todoList) {
+      if (todoList.hasOwnProperty(id)) {
+        const todo = todoList[id]
+        _list[id] = { content: todo.content }
       }
     }
     setList(_list)
+
+    const _selectons = Object.entries(todoList)
+      .filter(([id, todo]) => todo.checked)
+      .map(([id]) => +id)
+    setSelections(_selectons)
+  }
+  function changeChecked(params: { id: number }) {
+    const { id } = params
+    let newChecked = false
+    let _selections = selections.concat()
+    if (_selections.includes(id)) {
+      _selections = _selections.filter((item) => item !== id)
+      newChecked = false
+    } else {
+      _selections.push(id)
+      newChecked = true
+    }
+    setSelections(_selections)
+    updateTodo({ id, checked: newChecked })
+  }
+  function changeContent(params: { id: number; content: string }) {
+    const { id, content } = params
+    if (list[id].content === content) return
+    const todo = { content }
+    setList({ ...list, [id]: todo })
+    updateTodo({ id, content })
+  }
+  function createTodo(params: { content: string }) {
+    const { content } = params
+    const todo = { checked: false, content }
+    addTodo({ content }).then(({ code, result }) => {
+      const { id } = result
+      setList({ ...list, [id]: todo })
+    })
+  }
+  function removeTodo(params: { id: number }) {
+    const _list = {}
+    for (let id in list) {
+      if (list.hasOwnProperty(id) && +id !== params.id) {
+        _list[id] = list[id]
+      }
+    }
+    setList(_list)
+    deleteTodo({ id: params.id })
   }
 
   async function fetchList() {
-    const list = await getListTodo()
-    setList(list)
+    const { code, result } = await getListTodo()
+    if (code === 1) {
+      setData(result)
+    } else {
+      console.log('get list failed')
+    }
+  }
+  async function clearDone() {
+    if (!selections.length) return
+    const _selections = selections.concat()
+    Promise.all(_selections.map((id) => deleteTodo({ id }))).then(() => {
+      setSelections([])
+      const _list = {}
+      for (let id in list) {
+        if (list.hasOwnProperty(id) && !_selections.includes(+id)) {
+          _list[id] = list[id]
+        }
+      }
+      setList(_list)
+    })
   }
 
   useEffect(() => {
@@ -49,23 +104,27 @@ export default function ViewTodo() {
         {!Object.entries(list).length && (
           <div className={styles.no_data}>no data</div>
         )}
-        <CheckboxGroup selections={selections} onChange={setSelections}>
+        <CheckboxGroup
+          selections={selections}
+          onChange={setSelections}
+          clearChecked={clearDone}
+        >
           {Object.entries(list).map(([id, item]) => (
             <Checkbox
               key={id}
-              id={id}
+              id={+id}
               checked={item.checked}
               label={
                 <Content
                   text={item.content}
                   onChange={(newContent: string) =>
-                    changeContent(id, newContent)
+                    changeContent({ id: +id, content: newContent })
                   }
                   disabled={selections.includes(+id)}
                 />
               }
-              onChange={() => changeChecked(id)}
-              onRemove={() => delTodo(id)}
+              onChange={() => changeChecked({ id: +id })}
+              onRemove={() => removeTodo({ id: +id })}
             />
           ))}
         </CheckboxGroup>

@@ -7,7 +7,7 @@ const list = Array.from({ length: 12 }).map((_: undefined, index: number) => ({
 
 const getTodo = (params: { id: number }) => {
   const todo = list.filter(
-    (item) => item.id === params.id && item.deleteAt !== null
+    (item) => item.id === params.id && item.deleteAt === null
   )[0]
   if (!todo) return false
   return todo
@@ -26,17 +26,20 @@ export const getListTodo = () => {
   }
 }
 
-export const addTodo = (params: { content: string }) => {
+export const addTodo: (params: {
+  content: string
+}) => Promise<{ code: number; result: { id: number } }> = (params) => {
+  const id = list.length
   const todo = {
     checked: false,
     content: params.content,
-    id: list.length,
+    id,
     deleteAt: null,
   }
   list.push(todo)
   return Promise.resolve({
     code: 1,
-    result: true,
+    result: { id },
   })
 }
 
@@ -50,15 +53,19 @@ export const updateTodo = (params: {
 
   if (params.checked) todo.checked = params.checked
   if (params.content) todo.content = params.content
-  list[params.id] = todo
+  const index = getIndex(params.id)
+  list[index] = todo
   return Promise.resolve({ code: 1, result: true })
 }
 
-export const deleteTodo = (params: { id: number }) => {
+export const deleteTodo: (params: {
+  id: number
+}) => Promise<{ code: number; result?: true; msg?: string }> = (params) => {
   const todo = getTodo({ id: params.id })
   if (!todo) return Promise.resolve({ code: -1, msg: 'Id matchs no data!' })
   todo.deleteAt = Date.now()
-  list[params.id] = todo
+  const index = getIndex(params.id)
+  list[index] = todo
   return Promise.resolve({ code: 1, result: true })
 }
 
@@ -67,4 +74,14 @@ function getChecked() {
 }
 function getContent() {
   return Math.floor(Math.random() * 1e16) + ''
+}
+function getIndex(id: number) {
+  let index = 0
+  for (let i = 0; i < list.length; i += 1) {
+    if (list[i].id === id) {
+      index = i
+      break
+    }
+  }
+  return index
 }

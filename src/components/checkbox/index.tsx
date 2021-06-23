@@ -3,7 +3,7 @@ import { useMemo } from 'react'
 import styles from './index.module.scss'
 
 interface CheckBoxProps {
-  id: string
+  id: number
   label: React.ReactNode
   checked: boolean
   onChange: (newStatus: boolean) => void

@@ -10,7 +10,7 @@ import styles from './index.module.scss'
 interface CheckboxGroupProps {
   selections: number[]
   onChange: (newSelections: number[]) => void
-  list: { [key: string]: { selected: boolean } }
+  clearChecked?: () => void
 }
 
 export default function CheckboxGroup(
@@ -41,8 +41,6 @@ export default function CheckboxGroup(
     return cloneElement(child, { checked, onChange })
   })
 
-  function clearAll() {}
-
   return (
     <div className={styles.todo_group}>
       <span>{wrappedChildren}</span>
@@ -51,7 +49,9 @@ export default function CheckboxGroup(
         <button onClick={() => setStatus('all')}>all</button>
         <button onClick={() => setStatus('checked')}>checked</button>
         <button onClick={() => setStatus('uncheck')}>uncheck</button>
-        <button disabled onClick={clearAll}>clear completed</button>
+        {typeof props.clearChecked === 'function' && (
+          <button onClick={props.clearChecked}>clear completed</button>
+        )}
       </div>
     </div>
   )
