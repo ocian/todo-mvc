@@ -2,7 +2,13 @@ import Title from 'Src/components/title'
 import CheckboxGroup from 'Src/components/checkbox_group'
 import React, { useEffect, useState } from 'react'
 import styles from './todo.module.scss'
-import { deleteTodo, getListTodo, updateTodo, addTodo } from 'Src/mocks/todos'
+import {
+  deleteTodo,
+  getListTodo,
+  updateTodo,
+  addTodo,
+  updateTodos,
+} from 'Src/mocks/todos'
 import Checkbox from 'Src/components/checkbox'
 import Content from 'Src/components/content'
 import clsx from 'clsx'
@@ -32,20 +38,6 @@ export default function ViewTodo() {
       .filter(([id, todo]) => todo.checked)
       .map(([id]) => +id)
     setSelections(_selectons)
-  }
-  function changeChecked(params: { id: number }) {
-    const { id } = params
-    let newChecked = false
-    let _selections = selections.concat()
-    if (_selections.includes(id)) {
-      _selections = _selections.filter((item) => item !== id)
-      newChecked = false
-    } else {
-      _selections.push(id)
-      newChecked = true
-    }
-    setSelections(_selections)
-    updateTodo({ id, checked: newChecked })
   }
   function changeContent(params: { id: number; content: string }) {
     const { id, content } = params
@@ -81,6 +73,22 @@ export default function ViewTodo() {
     const _input = input
     setInput('')
     createTodo({ content: _input })
+  }
+  function changeSelections(newIds: number[]) {
+    const allIds = Array.from(new Set([].concat(newIds, selections)))
+    const addeds = []
+    const removeds = []
+    allIds.map((id) => {
+      newIds.includes(id) && !selections.includes(id) && addeds.push(id)
+      !newIds.includes(id) && selections.includes(id) && removeds.push(id)
+    })
+    setSelections(newIds)
+    updateTodos(
+      [].concat(
+        addeds.map((id) => ({ id, checked: true })),
+        removeds.map((id) => ({ id, checked: false }))
+      )
+    )
   }
 
   function toggleSelectAll() {
@@ -124,8 +132,12 @@ export default function ViewTodo() {
       <div className={styles.line_input}>
         <div
           className={clsx('icon-check', {
-            checked: Object.keys(list).length > 0 && selections.length === Object.keys(list).length,
-            uncheck: Object.keys(list).length === 0 || selections.length < Object.keys(list).length,
+            checked:
+              Object.keys(list).length > 0 &&
+              selections.length === Object.keys(list).length,
+            uncheck:
+              Object.keys(list).length === 0 ||
+              selections.length < Object.keys(list).length,
           })}
           onClick={toggleSelectAll}
         ></div>
@@ -144,7 +156,7 @@ export default function ViewTodo() {
         )}
         <CheckboxGroup
           selections={selections}
-          onChange={setSelections}
+          onChange={changeSelections}
           clearChecked={clearDone}
         >
           {Object.entries(list).map(([id, item]) => (
@@ -161,7 +173,6 @@ export default function ViewTodo() {
                   disabled={selections.includes(+id)}
                 />
               }
-              onChange={() => changeChecked({ id: +id })}
               onRemove={() => removeTodo({ id: +id })}
             />
           ))}

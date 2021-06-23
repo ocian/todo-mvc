@@ -6,7 +6,7 @@ interface CheckBoxProps {
   id: number
   label: React.ReactNode
   checked: boolean
-  onChange: (newStatus: boolean) => void
+  onChange?: (newStatus: boolean) => void
   onRemove: () => void
 }
 

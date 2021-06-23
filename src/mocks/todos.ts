@@ -75,6 +75,34 @@ export const updateTodo = (params: {
   return Promise.resolve({ code: 1, result: true })
 }
 
+export const updateTodos = (
+  params: {
+    id: number
+    checked?: boolean
+    content?: string
+  }[]
+) => {
+  const list = getList()
+  const idsError = []
+  params.map((param) => {
+    const todo = getTodo({ id: param.id })
+    if (!todo) {
+      idsError.push(param.id)
+      return
+    }
+    if (param.checked) todo.checked = param.checked
+    if (param.content) todo.content = param.content
+    const index = getIndex(param.id)
+    list[index] = todo
+  })
+  setList(list)
+  if (idsError.length < params.length)
+    return Promise.resolve({ code: 1, result: { idsError } })
+  else {
+    return Promise.resolve({ code: -1, result: { idsError } })
+  }
+}
+
 export const deleteTodo: (params: {
   id: number
 }) => Promise<{ code: number; result?: true; msg?: string }> = (params) => {
