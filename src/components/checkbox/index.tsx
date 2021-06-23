@@ -28,9 +28,9 @@ export default function Checkbox(props: CheckBoxProps) {
   return (
     <div className={styles.todo}>
       <div
-        className={clsx(styles.check, {
-          [styles.checked]: props.checked,
-          [styles.uncheck]: !props.checked,
+        className={clsx('icon-check', {
+          'checked': props.checked,
+          'uncheck': !props.checked,
         })}
         onClick={changeChecked}
       />

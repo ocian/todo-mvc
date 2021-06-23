@@ -3,50 +3,12 @@
 @import 'Src/styles/vars.scss';
 @import 'Src/styles/mixins.scss';
 
-$icon-translate: math.div($width-checkbox-icon, 5);
-
 .todo {
   display: flex;
   margin: 20px 0;
 }
 .todo + .todo {
   margin-top: 8px;
-}
-
-.check {
-  transition: border-color 0.3s ease-in;
-  flex: none;
-  top: 0;
-  left: 0;
-  width: $width-checkbox-icon;
-  height: $width-checkbox-icon;
-  margin-right: 10px;
-  border: $width-checkbox-icon-border solid;
-  border-radius: 100%;
-  cursor: pointer;
-  @include flex-center();
-
-  &:before {
-    transition: opacity 0.3s ease-in;
-    content: '';
-    width: $width-checkbox-icon * 0.6;
-    height: $width-checkbox-icon * 0.3;
-    border-left: 1px solid $color-checked;
-    border-bottom: 1px solid $color-checked;
-    transform: rotate(-45deg) translateX($icon-translate);
-  }
-  &.uncheck {
-    border-color: $color-uncheck;
-    &:before {
-      opacity: 0;
-    }
-  }
-  &.checked {
-    border-color: $color-checked;
-    &:before {
-      opacity: 1;
-    }
-  }
 }
 
 .content_wrapper {

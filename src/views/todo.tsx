@@ -1,10 +1,11 @@
 import Title from 'Src/components/title'
 import CheckboxGroup from 'Src/components/checkbox_group'
-import { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import styles from './todo.module.scss'
 import { deleteTodo, getListTodo, updateTodo, addTodo } from 'Src/mocks/todos'
 import Checkbox from 'Src/components/checkbox'
 import Content from 'Src/components/content'
+import clsx from 'clsx'
 
 interface ListItem {
   [key: string]: { id?: number; checked?: boolean; content: string }
@@ -13,6 +14,8 @@ interface ListItem {
 export default function ViewTodo() {
   const [list, setList] = useState<ListItem>(() => ({}))
   const [selections, setSelections] = useState<number[]>(() => [])
+  const [checkedAll, setCheckedAll] = useState<boolean>(() => false)
+  const [input, setInput] = useState<string>(() => '')
 
   // get data from apis, and use it into state
   function setData(todoList: ListItem) {
@@ -70,6 +73,16 @@ export default function ViewTodo() {
     deleteTodo({ id: params.id })
   }
 
+  function changeInput(event: React.ChangeEvent<HTMLInputElement>) {
+    setInput(event.target.value)
+  }
+  function pressKeyEnter(event: React.KeyboardEvent) {
+    if (event.key !== 'Enter') return
+    const _input = input
+    setInput('')
+    createTodo({ content: _input })
+  }
+
   async function fetchList() {
     const { code, result } = await getListTodo()
     if (code === 1) {
@@ -100,6 +113,22 @@ export default function ViewTodo() {
   return (
     <div className={styles.page}>
       <Title>todos</Title>
+      <div className={styles.line_input}>
+        <div
+          className={clsx('icon-check', {
+            checked: checkedAll,
+            uncheck: !checkedAll,
+          })}
+        ></div>
+        <input
+          type="text"
+          className={styles.input}
+          placeholder="What needs to be done?"
+          value={input}
+          onChange={changeInput}
+          onKeyPress={pressKeyEnter}
+        />
+      </div>
       <div className={styles.list}>
         {!Object.entries(list).length && (
           <div className={styles.no_data}>no data</div>

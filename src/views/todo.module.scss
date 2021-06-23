@@ -1,6 +1,12 @@
 @import "Src/styles/mixins.scss";
 @import "Src/styles/vars.scss";
 
+@mixin width {
+  width: 50vw;
+  max-width: 700px;
+  min-width: 400px;
+}
+
 .page {
   min-height: 100vh;
   background-color: #f5f5f5;
@@ -8,9 +14,7 @@
 }
 
 .list {
-  width: 50vw;
-  max-width: 700px;
-  min-width: 400px;
+  @include width();
   max-height: calc(100vh - 30px);
   box-sizing: border-box;
   overflow: auto;
@@ -25,4 +29,18 @@
   color: $color-font-label;
   @include flex-center();
   height: 70px;
+}
+
+.line_input  {
+  @include flex-center();
+  @include width();
+  background-color: #fff;
+  padding: 10px;
+  box-sizing: border-box;
+}
+.input {
+  outline: none;
+  border: none;
+  width: 100%;
+  font-size: 24px;
 }
