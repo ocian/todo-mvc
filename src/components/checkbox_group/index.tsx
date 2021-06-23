@@ -41,16 +41,26 @@ export default function CheckboxGroup(
     return cloneElement(child, { checked, onChange })
   })
 
+  function clearDone () {
+    if (typeof props.clearChecked !== 'function') return 
+    props.clearChecked()
+    setStatus('all')
+  }
+
   return (
     <div className={styles.todo_group}>
-      <span>{wrappedChildren}</span>
-      <div>
-        left: {Children.count(props.children) - props.selections.length}
-        <button onClick={() => setStatus('all')}>all</button>
-        <button onClick={() => setStatus('checked')}>checked</button>
-        <button onClick={() => setStatus('uncheck')}>uncheck</button>
+      <div className={styles.list}>{wrappedChildren}</div>
+      <div className={styles.actions}>
+        <span>
+          left: {Children.count(props.children) - props.selections.length}
+        </span>
+        <span className={styles.actions_btns}>
+          <button onClick={() => setStatus('all')}>all</button>
+          <button onClick={() => setStatus('checked')}>checked</button>
+          <button onClick={() => setStatus('uncheck')}>uncheck</button>
+        </span>
         {typeof props.clearChecked === 'function' && (
-          <button onClick={props.clearChecked}>clear completed</button>
+          <button onClick={clearDone}>clear completed</button>
         )}
       </div>
     </div>
