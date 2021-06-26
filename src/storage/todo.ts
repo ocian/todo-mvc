@@ -142,4 +142,26 @@ const deleteTodo: (params: { id: number }) => Promise<{ message?: string }> = (
   return getDelayPromise().then(() => ({}))
 }
 
-export default { getListTodo, addTodo, updateTodo, updateTodos, deleteTodo }
+const deleteTodos: (params: {
+  ids: number[]
+}) => Promise<{ idsError: number[] }> = (params) => {
+  const list = getList()
+  const idsError = []
+  const { ids } = params
+  ids.forEach((id) => {
+    const todo = getTodo({ id })
+    if (!todo) {
+      idsError.push(id)
+      return
+    }
+    todo.deleteAt = Date.now()
+    const index = getIndex(id)
+    list[index] = todo
+  })
+  setList(list)
+  if (idsError.length < ids.length)
+    return getDelayPromise().then(() => ({ idsError }))
+  else return getDelayPromise().then(() => Promise.reject({ idsError }))
+}
+
+export default { getListTodo, addTodo, updateTodo, updateTodos, deleteTodo, deleteTodos }

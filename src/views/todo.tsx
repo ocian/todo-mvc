@@ -36,15 +36,24 @@ export default function ViewTodo() {
     const { id, content } = params
     if (list[id].content === content) return
     const todo = { content }
+    const prevTodo = { content: list[id].content }
     setList({ ...list, [id]: todo })
-    storageTodo.updateTodo({ id, content })
+    storageTodo.updateTodo({ id, content }).catch(() => {
+      setList((prevList) => ({ ...prevList, [id]: prevTodo }))
+    })
   }
   function createTodo(params: { content: string }) {
+    if (!params.content.trim()) return
     const { content } = params
     const todo = { checked: false, content }
-    storageTodo.addTodo({ content }).then(({ id }) => {
-      setList({ ...list, [id]: todo })
-    })
+    storageTodo
+      .addTodo({ content })
+      .then(({ id }) => {
+        setList((prevList) => ({ ...prevList, [id]: todo }))
+      })
+      .catch(() => {
+        console.log('create failed')
+      })
   }
   function removeTodo(params: { id: number }) {
     const _list = {}
@@ -54,7 +63,10 @@ export default function ViewTodo() {
       }
     }
     setList(_list)
-    storageTodo.deleteTodo({ id: params.id })
+    const todoDeleted = list[params.id]
+    storageTodo.deleteTodo({ id: params.id }).catch(() => {
+      setList((prevList) => ({ ...prevList, [params.id]: todoDeleted }))
+    })
   }
 
   function changeInput(event: React.ChangeEvent<HTMLInputElement>) {
@@ -75,12 +87,29 @@ export default function ViewTodo() {
       !newIds.includes(id) && selections.includes(id) && removeds.push(id)
     })
     setSelections(newIds)
-    storageTodo.updateTodos(
-      [].concat(
-        addeds.map((id) => ({ id, checked: true })),
-        removeds.map((id) => ({ id, checked: false }))
+    storageTodo
+      .updateTodos(
+        [].concat(
+          addeds.map((id) => ({ id, checked: true })),
+          removeds.map((id) => ({ id, checked: false }))
+        )
       )
-    )
+      .then(syncSelections)
+      .catch(syncSelections)
+
+    function syncSelections({ idsError }: { idsError: number[] }) {
+      setSelections((prevSelections) => {
+        const addsError = []
+        const removesError = []
+        idsError.forEach((id) => {
+          if (addeds.includes(id)) addsError.push(id)
+          else removesError.push(id)
+        })
+        return prevSelections
+          .filter((id) => !addsError.includes(id))
+          .concat(removesError)
+      })
+    }
   }
 
   function toggleSelectAll() {
@@ -94,23 +123,31 @@ export default function ViewTodo() {
 
   async function fetchList() {
     const result = await storageTodo.getListTodo()
-    setData(result)
+    setData(result || [])
   }
   async function clearDone() {
     if (!selections.length) return
     const _selections = selections.concat()
-    Promise.all(_selections.map((id) => storageTodo.deleteTodo({ id }))).then(
-      () => {
-        setSelections([])
-        const _list = {}
-        for (let id in list) {
-          if (list.hasOwnProperty(id) && !_selections.includes(+id)) {
-            _list[id] = list[id]
-          }
-        }
-        setList(_list)
+    const todosDeleted = {}
+    setSelections([])
+    setList((list) => {
+      const _list = {}
+      for (let id in list) {
+        if (!_selections.includes(+id)) _list[id] = list[id]
+        else todosDeleted[id] = list[id]
       }
-    )
+      return _list
+    })
+    storageTodo.deleteTodos({ ids: _selections }).then(syncIds).catch(syncIds)
+
+    function syncIds({ idsError }: { idsError: number[] }) {
+      const listIdError = {}
+      idsError.forEach((id) => {
+        listIdError[id] = todosDeleted[id]
+      })
+      setSelections(idsError)
+      setList((prevList) => ({ ...prevList, ...listIdError }))
+    }
   }
 
   useEffect(() => {

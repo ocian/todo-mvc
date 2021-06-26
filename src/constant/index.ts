@@ -1,1 +1,1 @@
-export const timeoutStorage = 300
+export const timeoutStorage = 0
