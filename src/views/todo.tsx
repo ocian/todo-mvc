@@ -2,25 +2,18 @@ import Title from '../components/title'
 import CheckboxGroup from '../components/checkbox_group'
 import React, { useEffect, useState } from 'react'
 import styles from './todo.module.scss'
-import {
-  deleteTodo,
-  getListTodo,
-  updateTodo,
-  addTodo,
-  updateTodos,
-} from '../mocks/todos'
+import storageTodo from '../storage/todo'
 import Checkbox from '../components/checkbox'
 import Content from '../components/content'
 import clsx from 'clsx'
 
 interface ListItem {
-  [key: string]: { id?: number; checked?: boolean; content: string }
+  [key: number]: { content: string }
 }
 
 export default function ViewTodo() {
   const [list, setList] = useState<ListItem>({})
   const [selections, setSelections] = useState<number[]>([])
-  const [checkedAll, setCheckedAll] = useState<boolean>(false)
   const [input, setInput] = useState<string>('')
 
   // get data from apis, and use it into state
@@ -44,13 +37,12 @@ export default function ViewTodo() {
     if (list[id].content === content) return
     const todo = { content }
     setList({ ...list, [id]: todo })
-    updateTodo({ id, content })
+    storageTodo.updateTodo({ id, content })
   }
   function createTodo(params: { content: string }) {
     const { content } = params
     const todo = { checked: false, content }
-    addTodo({ content }).then(({ code, result }) => {
-      const { id } = result
+    storageTodo.addTodo({ content }).then(({ id }) => {
       setList({ ...list, [id]: todo })
     })
   }
@@ -62,7 +54,7 @@ export default function ViewTodo() {
       }
     }
     setList(_list)
-    deleteTodo({ id: params.id })
+    storageTodo.deleteTodo({ id: params.id })
   }
 
   function changeInput(event: React.ChangeEvent<HTMLInputElement>) {
@@ -83,7 +75,7 @@ export default function ViewTodo() {
       !newIds.includes(id) && selections.includes(id) && removeds.push(id)
     })
     setSelections(newIds)
-    updateTodos(
+    storageTodo.updateTodos(
       [].concat(
         addeds.map((id) => ({ id, checked: true })),
         removeds.map((id) => ({ id, checked: false }))
@@ -101,26 +93,24 @@ export default function ViewTodo() {
   }
 
   async function fetchList() {
-    const { code, result } = await getListTodo()
-    if (code === 1) {
-      setData(result)
-    } else {
-      console.log('get list failed')
-    }
+    const result = await storageTodo.getListTodo()
+    setData(result)
   }
   async function clearDone() {
     if (!selections.length) return
     const _selections = selections.concat()
-    Promise.all(_selections.map((id) => deleteTodo({ id }))).then(() => {
-      setSelections([])
-      const _list = {}
-      for (let id in list) {
-        if (list.hasOwnProperty(id) && !_selections.includes(+id)) {
-          _list[id] = list[id]
+    Promise.all(_selections.map((id) => storageTodo.deleteTodo({ id }))).then(
+      () => {
+        setSelections([])
+        const _list = {}
+        for (let id in list) {
+          if (list.hasOwnProperty(id) && !_selections.includes(+id)) {
+            _list[id] = list[id]
+          }
         }
+        setList(_list)
       }
-      setList(_list)
-    })
+    )
   }
 
   useEffect(() => {
