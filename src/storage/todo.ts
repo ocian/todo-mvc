@@ -7,6 +7,8 @@
  * createAt [number]
  */
 
+import { timeoutStorage } from '../constant/index'
+
 interface ListItem {
   id: number
   checked: boolean
@@ -54,6 +56,12 @@ const getIndex = (id: number) => {
   }
   return index
 }
+const getDelayPromise = (delay?: number) => {
+  if (!delay && !timeoutStorage) return Promise.resolve()
+  return new Promise((resolve) => {
+    setTimeout(resolve, delay || timeoutStorage)
+  })
+}
 
 const getListTodo: () => Promise<KeyList> = () => {
   const list = getList()
@@ -73,7 +81,7 @@ const addTodo: (params: { content: string }) => Promise<{ id: number }> = (
   const todo = { checked: false, content: params.content, id, deleteAt: null }
   list.push(todo)
   setList(list)
-  return Promise.resolve({ id })
+  return getDelayPromise().then(() => ({ id }))
 }
 
 const updateTodo: (params: ListItemParamed) => Promise<{ message?: string }> = (
@@ -81,14 +89,18 @@ const updateTodo: (params: ListItemParamed) => Promise<{ message?: string }> = (
 ) => {
   const list = getList()
   const todo = getTodo({ id: params.id })
-  if (!todo) return Promise.reject({ message: 'Id matchs no data!' })
+  if (!todo) {
+    return getDelayPromise().then(() =>
+      Promise.reject({ message: 'Id matchs no data!' })
+    )
+  }
 
   if (params.checked !== undefined) todo.checked = params.checked
   if (params.content !== undefined) todo.content = params.content
   const index = getIndex(params.id)
   list[index] = todo
   setList(list)
-  return Promise.resolve({})
+  return getDelayPromise().then(() => ({}))
 }
 
 const updateTodos: (
@@ -108,10 +120,11 @@ const updateTodos: (
     list[index] = todo
   })
   setList(list)
-  if (idsError.length < params.length) return Promise.resolve({ idsError })
-  else {
+  if (idsError.length < params.length) {
+    return getDelayPromise().then(() => ({ idsError }))
+  } else {
     // all failed
-    return Promise.reject({ idsError })
+    return getDelayPromise().then(() => ({ idsError }))
   }
 }
 
@@ -120,12 +133,13 @@ const deleteTodo: (params: { id: number }) => Promise<{ message?: string }> = (
 ) => {
   const list = getList()
   const todo = getTodo({ id: params.id })
-  if (!todo) return Promise.reject({ message: 'Id matchs no data!' })
+  if (!todo)
+    return getDelayPromise().then(() => ({ message: 'Id matchs no data!' }))
   todo.deleteAt = Date.now()
   const index = getIndex(params.id)
   list[index] = todo
   setList(list)
-  return Promise.resolve({})
+  return getDelayPromise().then(() => ({}))
 }
 
 export default { getListTodo, addTodo, updateTodo, updateTodos, deleteTodo }
