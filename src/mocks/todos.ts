@@ -90,8 +90,8 @@ export const updateTodos = (
       idsError.push(param.id)
       return
     }
-    if (param.checked) todo.checked = param.checked
-    if (param.content) todo.content = param.content
+    if (param.checked !== undefined) todo.checked = param.checked
+    if (param.content !== undefined) todo.content = param.content
     const index = getIndex(param.id)
     list[index] = todo
   })

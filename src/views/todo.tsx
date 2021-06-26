@@ -92,11 +92,12 @@ export default function ViewTodo() {
   }
 
   function toggleSelectAll() {
+    let ids: number[] = []
     if (selections.length < Object.keys(list).length) {
-      setSelections(Object.keys(list).map((id) => +id))
-    } else {
-      setSelections([])
+      ids = Object.keys(list).map((id) => +id)
     }
+    setSelections(ids)
+    changeSelections(ids)
   }
 
   async function fetchList() {
