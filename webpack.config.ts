@@ -46,8 +46,9 @@ const getCssLoaderConfig = (mode: "development" | "production") => ({
   loader: "css-loader",
   options: {
     modules: {
+      auto: /\.module\.\w+$/i,
       localIdentName:
-        mode === "development" ? "[path][name]__[local]" : undefined,
+        mode === "development" ? "[path][name]__[local]" : "[hash:base64]",
     },
   },
 });
