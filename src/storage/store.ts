@@ -1,59 +1,52 @@
 import * as T from "../types";
 
-const setLocalStorage = (source) => {
-  localStorage.setItem("todo_list", JSON.stringify(source));
+export const getSource = () => ({});
+
+export const add: T.store.AddFn = ({ content, checked }, source) => {
+  const stamp = Date.now();
+  const target = {
+    ...source,
+    ["" + stamp]: { id: stamp, content, checked, created_at: stamp },
+  };
+  return target;
 };
-const getLocalStorage = () => {
-  const target = localStorage.getItem("todo_list");
-  return target ? JSON.parse(target) : {};
+
+export const update: T.store.UpdateFn = ({ id, content, checked }, source) => {
+  const current = source[id];
+  if (!current)
+    return new Error(JSON.stringify({ code: -1001, message: "id not exists" }));
+  const target = {
+    ...source,
+    [id]: Object.assign(
+      { ...source[id] },
+      content !== undefined && { content },
+      typeof checked === "boolean" && { checked }
+    ),
+  };
+  return target;
 };
 
-export const getStore = ({ onUpdate }: T.store.GetStoreParams) => {
-  const list = new Proxy<T.store.ItemKeyList>(
-    { ...getLocalStorage() },
-    {
-      set: (target, p, newValue, receiver) => {
-        Reflect.set(target, p, newValue, receiver);
-        setLocalStorage(target);
-        onUpdate?.(target);
-        return true;
-      },
-    }
-  );
+export const del: T.store.DelFn = ({ id }, source) => {
+  const current = source[id];
+  if (!current)
+    return new Error(JSON.stringify({ code: -1002, message: "id not found" }));
+  const target = { ...source };
+  delete target[id];
+  return target;
+};
 
-  const add: T.store.AddFn = ({ content }) => {
-    const stamp = Date.now();
-    list["" + stamp] = { id: stamp, content };
-  };
+export const getList: T.store.GetListFn = (source, options) => {
+  let list = Object.entries(source).map(([_, value]) => value);
 
-  const update: T.store.UpdateFn = ({ id, content }) => {
-    const target = list[id];
-    if (!target)
-      return new Error(
-        JSON.stringify({ code: -1001, message: "id not exists" })
-      );
-    return (list["" + id] = { ...list["" + id], content });
-  };
+  switch (options?.filter) {
+    case "checked":
+      list = list.filter((i) => i.checked);
+      break;
+    case "unchecked":
+      list = list.filter((i) => !i.checked);
+      break;
+    default:
+  }
 
-  const del: T.store.DelFn = ({ id }) => {
-    const target = list[id];
-    if (!target)
-      return new Error(
-        JSON.stringify({ code: -1002, message: "id not found" })
-      );
-    delete list["" + id];
-    return id;
-  };
-
-  const getList: T.store.GetListFn = () => {
-    return Object.entries(list).map(([_, value]) => value);
-  };
-
-  return {
-    list,
-    add,
-    update,
-    del,
-    getList,
-  };
+  return list.sort((l, r) => r.created_at - l.created_at);
 };
