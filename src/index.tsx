@@ -1,5 +1,6 @@
-import ReactDOM from 'react-dom'
-import "./styles/base.scss"
-import ViewTodo from './views/todo'
+import { createRoot } from "react-dom/client";
+import "./styles/base.scss";
+import ViewTodo from "./views/todo";
 
-ReactDOM.render(<ViewTodo />, document.querySelector('#root'))
+const root = createRoot(document.querySelector("#root"));
+root.render(<ViewTodo />);
