@@ -93,7 +93,11 @@ const compiler: (env, agrs) => webpack.Configuration = (env, args) => {
         },
         {
           test: /\.css$/,
-          use: [config.cssInsertLoader, getCssLoaderConfig(config.mode)],
+          use: [
+            config.cssInsertLoader,
+            getCssLoaderConfig(config.mode),
+            "postcss-loader",
+          ],
         },
         {
           test: /\.s(c|a)ss$/,
